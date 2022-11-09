@@ -1,2 +1,4 @@
-# lens-subgraph
-Fork of https://github.com/rtomas/lens-protocol-subgraph - removed followers entity which was causing huge arrays
+# Lens Subgraph
+Fork of https://github.com/rtomas/lens-protocol-subgraph 
+
+Removed followers entity which was causing huge arrays
