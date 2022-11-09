@@ -882,3 +882,44 @@ export class Comment extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 }
+
+export class SocialGraph extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save SocialGraph entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type SocialGraph must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("SocialGraph", id.toString(), this);
+    }
+  }
+
+  static load(id: string): SocialGraph | null {
+    return changetype<SocialGraph | null>(store.get("SocialGraph", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get following(): Array<string> {
+    let value = this.get("following");
+    return value!.toStringArray();
+  }
+
+  set following(value: Array<string>) {
+    this.set("following", Value.fromStringArray(value));
+  }
+}

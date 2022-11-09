@@ -9,10 +9,11 @@ import {
   ProfileCreatorWhitelisted,
   PostCreated,
   MirrorCreated,
-  CommentCreated
+  CommentCreated,
+  Followed
 } from '../../generated/LensHub/LensHub'
 import { accounts, profiles, creators, publicactions } from '../modules'
-import { Account } from '../../generated/schema'
+import { Account, SocialGraph } from '../../generated/schema'
 
 export function handleProfileCreated(event: ProfileCreated): void {
   let profile = profiles.getOrCreateProfile(event.params.profileId, event.params.timestamp)
@@ -109,3 +110,29 @@ export function handleCommentCreated(event: CommentCreated): void {
   comment.save()
 }
 
+export function handleFollowed(event: Followed): void {
+
+  let entity = SocialGraph.load(event.params.follower.toHexString());
+
+  if (!entity) {
+    let entity = new SocialGraph(event.params.follower.toHexString());
+    let newFollowingList: string[] = [];
+    for (let index = 0; index < event.params.profileIds.length; index++) {
+      const profileId = event.params.profileIds[index].toString();
+      newFollowingList.push(profileId);
+    }
+
+    entity.following = newFollowingList;
+    entity.save();
+  }
+  else {
+    let newFollowingList: string[] = entity.following;
+    for (let index = 0; index < event.params.profileIds.length; index++) {
+      const profileId = event.params.profileIds[index].toString();
+      newFollowingList.push(profileId);
+    }
+    entity.following = newFollowingList;
+    entity.save();
+  };
+
+};
